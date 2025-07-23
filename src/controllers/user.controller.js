@@ -3,7 +3,6 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import User from "../models/user.model.js";
 import jwt from "jsonwebtoken"
-import sendPushNotification from "../Utils/FcmNotification.js"
 
 
 const userSignup = asyncHandler(async (req, res) => {
@@ -28,14 +27,14 @@ const userSignup = asyncHandler(async (req, res) => {
     }
 
     //IMAGE FUNCTIONALITY
-    profilePic = `https://avatar.iran.liara.run/username?username=${username}`
+    const avatar = `https://avatar.iran.liara.run/username?username=${username}`
 
     const user = await User.create({
         fullName,
         username: username.toLowerCase(),
         email,
         password,
-        profilePic,
+        profilePic: avatar,
     })
 
     const createdUser = await User.findById(user._id).select("-password -refreshToken")
@@ -127,12 +126,6 @@ const userLogout = asyncHandler(async (req, res) => {
         httpOnly: true,
         secure: true
     }
-
-    await sendPushNotification(
-        req.user.fcmToken,
-        "Logout",
-        "You’ve Logged Out successfully!"
-    );
 
     return res
         .status(200)
