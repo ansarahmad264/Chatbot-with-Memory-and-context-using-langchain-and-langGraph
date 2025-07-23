@@ -1,0 +1,117 @@
+import Conversation from "../models/conversation.model.js"
+import Message from "../models/message.model.js"
+import { asyncHandler } from "../utils/asyncHandler.js";
+import {ApiError} from "../utils/ApiError.js"
+import { getRecieverSocketId, io } from "../socket/socket.js"
+import sendPushNotification from "../utils/FcmNotification.js";
+import User from "../models/user.model.js";
+import { chatWithMemory } from "../config/chatbotLangGraph.js"
+
+const sendMessage = asyncHandler(async (req, res) => {
+    try {
+        const { message } = req.body;
+        const { recieverId } = req.params;
+        const senderId = req.user._id;
+        const AI_USER_ID = process.env.AI_USER_ID;
+
+        // 🔄 Get or create conversation
+        let conversation = await Conversation.findOne({
+            participants: { $all: [senderId, recieverId] }
+        });
+
+        if (!conversation) {
+            conversation = await Conversation.create({
+                participants: [senderId, recieverId]
+            });
+        }
+
+        // 💬 Save user's message
+        const userMessage = new Message({
+            senderId,
+            recieverId,
+            message,
+            conversationId: conversation._id
+        });
+
+        await Promise.all([conversation.save(), userMessage.save()]);
+
+        // 👇 If chatting with the AI bot
+        if (recieverId.toString() === AI_USER_ID) {
+            const aiReply = await chatWithMemory(message, senderId);
+
+            const aiMessage = new Message({
+                senderId: AI_USER_ID,
+                recieverId: senderId,
+                message: aiReply,
+                conversationId: conversation._id
+            });
+
+            await aiMessage.save();
+
+            const recieverSocketId = getRecieverSocketId(senderId); // send reply back to original sender
+            if (recieverSocketId) {
+                io.to(recieverSocketId).emit("newMessage", aiMessage);
+            }
+        } else {
+            // 📲 Notify human recipient
+            const recieverSocketId = getRecieverSocketId(recieverId);
+            if (recieverSocketId) {
+                io.to(recieverSocketId).emit("newMessage", userMessage);
+            } else {
+                const receiver = await User.findById(recieverId);
+            }
+        }
+
+        res.status(201).json({
+            message,
+            from: req.user.fullName,
+            to: recieverId
+        });
+
+    } catch (error) {
+        console.log("Error in SendMessage Controller", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+const getMessages = asyncHandler(async (req, res) => {
+    try {
+        const { userToChatId } = req.params
+        const senderId = req.user._id
+
+        const conversation = await Conversation.findOne({
+            participants: { $all: [senderId, userToChatId] },   
+            deletedFor: { $nin: [senderId] }
+        })
+
+        if (!conversation) {
+            return res.status(404).json({ message: "No conversation found" });
+        }
+
+        const messagesRaw = await Message.find(
+            { 
+            conversationId: conversation._id,
+            deletedFor: { $ne: senderId } 
+            })
+            .sort({ createdAt: 1 }) // oldest first
+            .populate("senderId", "fullName username")
+            .populate("recieverId", "fullName username");
+
+        const messages = messagesRaw.map(msg => ({
+            _id: msg._id,
+            Sender: `${msg.senderId.fullName} (${msg.senderId.username})`,
+            Receiver: `${msg.recieverId.fullName} (${msg.recieverId.username})`,
+            Message: msg.message
+        }));
+        res.status(200).json(messages)
+
+    } catch (error) {
+        console.log("Error in getMessage Controller", error.message)
+        return res.status(500).json({ error: "internal Server Error" })
+    }
+})
+
+export {
+    sendMessage,
+    getMessages,
+}
