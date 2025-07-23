@@ -18,8 +18,8 @@ app.use(cookieParser());
 app.use(passport.initialize())
 
 //IMPORT ROUTES
-import userRouter from "./Routes/userRoutes.js"
-import messageRouter from "./Routes/messageRoutes.js"
+import userRouter from "./routes/user.routes.js"
+import messageRouter from "./routes/message.routes.js"
 
 //DECLARE ROUTES
 app.use("/api/v1/user", userRouter)
