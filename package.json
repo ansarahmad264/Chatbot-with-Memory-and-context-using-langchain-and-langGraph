@@ -1,0 +1,11 @@
+{
+  "name": "chatbot-with-memory-langgraph",
+  "version": "1.0.0",
+  "description": "LLM application with memory a simple chat bot applicaiton with memory and context serving as an AI Assistant for user of any applicaiton",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ansar Ahmad",
+  "license": "ISC"
+}
