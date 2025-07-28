@@ -8,7 +8,7 @@ import jwt from "jsonwebtoken"
 const userSignup = asyncHandler(async (req, res) => {
     // ALL THE COMMENTED CODE IS TO REMOVE THE IMAGE HANDLING and GENDER FIELD TEMPORARILY
 
-    const { fullName, username, email, password, confirmPassword} = req.body
+    const { fullName, username, email, password, confirmPassword } = req.body
 
     if (password != confirmPassword) {
         throw new ApiError(400, "Password Do not Match")
@@ -194,22 +194,22 @@ const googleCallback = asyncHandler(async (req, res) => {
         res.status(200)
             .cookie("accessToken", accessToken, options)
             .cookie("refreshToken", refreshToken, options)
-            .redirect("http://localhost:3000/chats")
+            .redirect("http://localhost:3000/user/chatbot")
 
     } catch (err) {
         res.status(500).json({ message: 'Internal error', error: err.message });
     }
 });
 
-const getUserProfile = asyncHandler(async (req,res) => {
+const getUserProfile = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id)
-    .select("fullName username profilePic email -_id")
+        .select("fullName username profilePic email -_id")
 
     if (!user) {
         return res.status(404).json(new ApiResponse(404, null, "User not found"));
-      }
+    }
 
-    return res.json(new ApiResponse(200, {user},))     
+    return res.json(new ApiResponse(200, { user },))
 })
 
 

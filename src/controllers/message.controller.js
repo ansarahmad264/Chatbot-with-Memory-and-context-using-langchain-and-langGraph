@@ -1,7 +1,7 @@
 import Conversation from "../models/conversation.model.js"
 import Message from "../models/message.model.js"
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { getRecieverSocketId, io } from "../socket/socket.js"
+import { getRecieverSocketId, io } from "../app.js"
 import User from "../models/user.model.js";
 import { chatWithMemory } from "../config/chatbotLangGraph.js"
 
@@ -78,7 +78,7 @@ const getMessages = asyncHandler(async (req, res) => {
         const senderId = req.user._id
 
         const conversation = await Conversation.findOne({
-            participants: { $all: [senderId, userToChatId] },   
+            participants: { $all: [senderId, userToChatId] },
             deletedFor: { $nin: [senderId] }
         })
 
@@ -87,9 +87,9 @@ const getMessages = asyncHandler(async (req, res) => {
         }
 
         const messagesRaw = await Message.find(
-            { 
-            conversationId: conversation._id,
-            deletedFor: { $ne: senderId } 
+            {
+                conversationId: conversation._id,
+                deletedFor: { $ne: senderId }
             })
             .sort({ createdAt: 1 }) // oldest first
             .populate("senderId", "fullName username")
@@ -101,14 +101,16 @@ const getMessages = asyncHandler(async (req, res) => {
             Receiver: `${msg.recieverId.fullName} (${msg.recieverId.username})`,
             Message: msg.message
         }));
-        res.status(200).json(messages)
+        res.status(200).json({
+            conversationId: conversation._id,
+            messages
+        })
 
     } catch (error) {
         console.log("Error in getMessage Controller", error.message)
         return res.status(500).json({ error: "internal Server Error" })
     }
 })
-
 export {
     sendMessage,
     getMessages,
