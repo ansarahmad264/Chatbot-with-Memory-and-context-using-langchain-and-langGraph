@@ -3,7 +3,7 @@ name: 🚀 Deploy to EC2
 on:
   push:
     branches:
-      - main
+      - backend
 
 jobs:
   deploy:
@@ -31,6 +31,6 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd ${{ secrets.TARGET_DIR }}
-            git pull origin main
+            git pull origin backend
             npm install
             pm2 restart chatbot
