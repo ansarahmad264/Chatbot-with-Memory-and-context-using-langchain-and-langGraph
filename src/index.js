@@ -4,9 +4,9 @@ dotenv.config({
 })
 
 import connectDB from "./db/connection.js"
-import { server } from "./app.js" // Import server instead of app
+import { app, server } from "./app.js" // Import server instead of app
 
-server.get("/", (req, res) => {
+app.get("/", (req, res) => {
     res.json({ success: true, data: {}, message: "Hosted and Server is running Successfully... .." })
 })
 
