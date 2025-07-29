@@ -91,8 +91,7 @@ const userLogin = asyncHandler(async (req, res) => {
 
     const options = {
         httpOnly: true,
-        secure: true,
-        sameSite: 'None',
+        secure: false,
     }
 
     return res.status(200)
@@ -125,8 +124,7 @@ const userLogout = asyncHandler(async (req, res) => {
 
     const options = {
         httpOnly: true,
-        secure: true,
-        sameSite: 'None',
+        secure: false,
     }
 
     return res
@@ -161,8 +159,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
     const options = {
         httpOnly: true,
-        secure: true,
-        sameSite: 'None',
+        secure: false,
     }
 
     return res
@@ -191,8 +188,7 @@ const googleCallback = asyncHandler(async (req, res) => {
 
         const options = {
             httpOnly: true,
-            secure: true,
-            sameSite: 'None',
+            secure: false,
         }
 
         res.status(200)
