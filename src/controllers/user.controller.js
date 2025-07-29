@@ -55,7 +55,7 @@ const generateAccessAndRefreshToken = async (userId) => {
         const refreshToken = user.generateRefreshToken()
 
         user.refreshToken = refreshToken
-        await user.save({ validateBeforeSave: false })
+        await user.save({ validateBeforeSave: true })
 
         return { accessToken, refreshToken }
 
@@ -91,7 +91,7 @@ const userLogin = asyncHandler(async (req, res) => {
 
     const options = {
         httpOnly: true,
-        secure: false,
+        secure: true,
         sameSite: 'None',
     }
 
@@ -125,7 +125,7 @@ const userLogout = asyncHandler(async (req, res) => {
 
     const options = {
         httpOnly: true,
-        secure: false,
+        secure: true,
         sameSite: 'None',
     }
 
@@ -161,7 +161,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
     const options = {
         httpOnly: true,
-        secure: false,
+        secure: true,
         sameSite: 'None',
     }
 
@@ -191,7 +191,7 @@ const googleCallback = asyncHandler(async (req, res) => {
 
         const options = {
             httpOnly: true,
-            secure: false,
+            secure: true,
             sameSite: 'None',
         }
 
