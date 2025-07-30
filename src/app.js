@@ -27,6 +27,7 @@ const io = new Server(server, {
 app.use(cors({
     origin: "http://13.201.93.112:3000",
     credentials: true
+    
 }))
 app.use(express.json({ limit: "16kb" }))
 app.use(express.urlencoded({ extended: true, limit: "16kb" }))
