@@ -94,7 +94,8 @@ const userLogin = asyncHandler(async (req, res) => {
         secure: false,
     }
 
-    return res.status(200)
+    return res.header('token', accessToken)
+        .status(200)
         .cookie("accessToken", accessToken, options)
         .cookie("refreshToken", refreshToken, options)
         .json(
