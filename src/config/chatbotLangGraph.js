@@ -33,10 +33,14 @@ const memory = new MemorySaver();
 const chatbot = workflow.compile({ checkpointer: memory });
 
 // Unique thread ID for each user/session
-const threadId = uuidv4();
+  // const threadId = uuidv4();
 
 // Function to process a chat input
-export async function chatWithMemory(userMessage) {
+export async function chatWithMemory(userMessage, userId) {
+
+    // Unique thread ID for each user/session
+    const threadId = userId;
+
   const res = await chatbot.invoke(
     { messages: [{ role: "user", content: userMessage }] },
     { configurable: { thread_id: threadId } }
