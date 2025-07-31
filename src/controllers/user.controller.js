@@ -196,7 +196,7 @@ const googleCallback = asyncHandler(async (req, res) => {
             .status(200)
             .cookie("accessToken", accessToken, options)
             .cookie("refreshToken", refreshToken, options)
-            .redirect("http://localhost:3000/user/chatbot")
+            .redirect("http://13.201.93.112.nip.io:3000/user/chatbot")
 
     } catch (err) {
         res.status(500).json({ message: 'Internal error', error: err.message });
