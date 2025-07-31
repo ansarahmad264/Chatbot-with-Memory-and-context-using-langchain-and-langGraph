@@ -17,7 +17,7 @@ const server = http.createServer(app)
 // Initialize Socket.IO
 const io = new Server(server, {
     cors: {
-        origin: ["http://13.201.93.112:3000"],
+        origin: ["http://13.201.93.112.nip.io:3000"],
         methods: ["GET", "POST"],
         credentials: true
     }
@@ -25,7 +25,7 @@ const io = new Server(server, {
 
 // Middleware
 app.use(cors({
-    origin: "http://13.201.93.112:3000",
+    origin: "http://13.201.93.112.nip.io:3000",
     credentials: true    
 }))
 app.use(express.json({ limit: "16kb" }))
