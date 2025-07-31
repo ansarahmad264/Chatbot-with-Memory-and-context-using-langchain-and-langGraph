@@ -63,10 +63,13 @@ export const getRecieverSocketId = (recieverId) => {
 
 // Import routes
 import userRouter from "./routes/user.routes.js"
+import authRouter from "./routes/auth.routes.js";
 import messageRouter from "./routes/message.routes.js"
+
 
 // Declare routes
 app.use("/api/v1/user", userRouter)
+app.use('/', authRouter); // This will now only handle /google and /google/callback
 app.use("/api/v2/message", messageRouter)
 
 // Export for external use (e.g., in server.js)
