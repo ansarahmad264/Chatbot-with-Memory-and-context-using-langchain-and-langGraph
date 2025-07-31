@@ -192,7 +192,7 @@ const googleCallback = asyncHandler(async (req, res) => {
             secure: false,
         }
 
-        res .header('token', newAccessToken)
+        res .header('token', accessToken)
             .status(200)
             .cookie("accessToken", accessToken, options)
             .cookie("refreshToken", refreshToken, options)
