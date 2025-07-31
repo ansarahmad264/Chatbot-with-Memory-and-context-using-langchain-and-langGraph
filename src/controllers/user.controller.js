@@ -162,7 +162,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         secure: false,
     }
 
-    return res
+    return res.header('token', newAccessToken)
         .status(200)
         .cookie("accessToken", newAccessToken, options)
         .cookie("refreshToken", newRefreshToken, options)
