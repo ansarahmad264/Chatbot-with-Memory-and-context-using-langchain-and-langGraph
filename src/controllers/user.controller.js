@@ -192,7 +192,8 @@ const googleCallback = asyncHandler(async (req, res) => {
             secure: false,
         }
 
-        res.status(200)
+        res .header('token', newAccessToken)
+            .status(200)
             .cookie("accessToken", accessToken, options)
             .cookie("refreshToken", refreshToken, options)
             .redirect("http://localhost:3000/user/chatbot")
